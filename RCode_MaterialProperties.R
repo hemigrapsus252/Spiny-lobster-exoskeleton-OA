@@ -120,11 +120,11 @@ hard %>%
   group_by(Region, Treatment) %>%
   summarise_all(.funs=c(mean="mean", sd="sd"))
 
-hardness_stats<-ddply(hard,~Treatment + Region,summarise,mean=mean(Hardness),sd=sd(Hardness)) #computes the mean thickness per treatment
+hardness_stats<-ddply(hard%>% filter(Molted. == "No"),~Treatment + Region,summarise,mean=mean(Hardness),sd=sd(Hardness)) #computes the mean thickness per treatment
 hardness_stats <- hardness_stats %>% #This is changing the names from my defaults to what I want on the graphs
   mutate(Region = fct_recode(Region,"Carapace spine" = "Dsp"))
 hardness_stats <- hardness_stats %>% #This is changing the names from my defaults to what I want on the graphs
-  mutate(Treatment = fct_recode(Treatment,"7.97" = "A",  "7.67" = "B", "7.67 ±0.10" = "D", "7.67 ±0.05" = "C"))
+  mutate(Treatment = fct_recode(Treatment,"7.97" = "A",  "7.67" = "B", "7.67 Â±0.10" = "D", "7.67 Â±0.05" = "C"))
 levels(hardness_stats$Treatment)<-gsub(" ", "\n",levels(hardness_stats$Treatment))
 
 hardness_stats_dsp<-subset(hardness_stats, Region=="Carapace spine")
@@ -195,12 +195,12 @@ hardhorn<-ggplot(hardness_stats_horn, aes(x=Treatment, y=mean, fill=Treatment)) 
 
    # ----------------------
 
-stiffness_stats<-ddply(stiff,~Treatment + Region,summarise,mean=mean(Stiffness),sd=sd(Stiffness)) #computes the mean thickness per treatment
+stiffness_stats<-ddply(stiff %>% filter(Molted. == "No"),~Treatment + Region,summarise,mean=mean(Stiffness),sd=sd(Stiffness)) #computes the mean thickness per treatment
 stiffness_stats <- stiffness_stats %>% #This is changing the names from my defaults to what I want on the graphs
   mutate(Region = fct_recode(Region,"Carapace spine" = "Dsp"))
 
 stiffness_stats <- stiffness_stats %>% #This is changing the names from my defaults to what I want on the graphs
-  mutate(Treatment = fct_recode(Treatment,"7.97" = "A", "7.67" = "B",  "7.67 ±0.10" = "D", "7.67 ±0.05" = "C"))
+  mutate(Treatment = fct_recode(Treatment,"7.97" = "A", "7.67" = "B",  "7.67 Â±0.10" = "D", "7.67 Â±0.05" = "C"))
 levels(stiffness_stats$Treatment)<-gsub(" ", "\n",levels(stiffness_stats$Treatment))
 
 stiff_stats_dsp<-subset(stiffness_stats, Region=="Carapace spine")
