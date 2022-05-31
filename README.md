@@ -24,5 +24,5 @@ relationship between mineralization and mechanical properties of the exoskeleton
 chemistry, and that fluctuating reduced pH conditions can induce responses not observed under the stable
 reduced pH conditions often used in OA research. Furthermore, this study shows that some juvenile
 California spiny lobster exoskeletal defenses are responsive to changes in ocean carbonate chemistry,
-even during the intermolt period, in ways that can potentially increase s 45 usceptibility to predation among
+even during the intermolt period, in ways that can potentially increase susceptibility to predation among
 this critical life stage.
