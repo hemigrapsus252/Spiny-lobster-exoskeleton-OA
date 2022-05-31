@@ -1,8 +1,8 @@
 # Exoskeletal predator defenses of juvenile California spiny lobsters (Panulirus interruptus) are affected by fluctuating ocean acidification-like conditions
 
-Statistical code to reproduce analyses in the above manuscript. Data are available on PANGAEA at: 
+Statistical code to reproduce analyses in the above manuscript. Data are available on PANGAEA at: TK
 
-Abstract
+Abstract: 
 Spiny lobsters rely on multiple exoskeletal predator defenses that may be sensitive to ocean
 acidification (OA). Compromised mechanical integrity of these defensive structures may tilt predator
 prey outcomes, leading to increased mortality in the lobsters’ environment. Here, we tested the effects of
