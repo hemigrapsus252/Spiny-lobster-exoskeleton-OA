@@ -1,0 +1,98 @@
+---
+title: "Antennal stiffness"
+author: "Kaitlyn Lowder"
+date: '2022-05-30'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#library(userfriendlyscience) #package not available at time of publication anymore
+library(reshape2)
+library(ggpattern) #for geom_boxplot_pattern
+library(ggpubr) #for geom_signif
+library(forcats)
+
+```
+
+## Import data
+
+```{r}
+
+EI<-read.csv("Data_AntennaeStiffness.csv")
+head(EI)
+nrow(EI)
+
+EI<-subset(EI, run=="1") #gets rid of duplicate test; better because second test may be on a weakened structure
+EI_unmolt<-subset(EI, molt_status=="0") #Lobsters that didn't molt
+
+```
+
+
+## Statistical tests
+
+```{r}
+#Proximal location
+shapiro.test(subset(EI_unmolt,treatment=="A")$proximal_ei) #A is normal
+shapiro.test(subset(EI_unmolt,treatment=="B")$proximal_ei) #B is normal
+shapiro.test(subset(EI_unmolt,treatment=="C")$proximal_ei) #C is normal
+shapiro.test(subset(EI_unmolt,treatment=="D")$proximal_ei) #D is normal
+bartlett.test(EI_unmolt$proximal_ei~EI_unmolt$treatment) #not equal; one high data point in A
+oneway.test(proximal_ei~treatment, data=EI_unmolt, var.equal=FALSE) #statistically significant
+#posthocTGH(EI_unmolt$proximal_ei, EI_unmolt$treatment, method="games-howell", digits=4) #B &D are different 
+
+#Distal location
+shapiro.test(subset(EI_unmolt,treatment=="A")$distal_ei) #A is normal
+shapiro.test(subset(EI_unmolt,treatment=="B")$distal_ei) #B is not normal
+shapiro.test(subset(EI_unmolt,treatment=="C")$distal_ei) #C is normal
+shapiro.test(subset(EI_unmolt,treatment=="D")$distal_ei) #D is not normal
+bartlett.test(EI_unmolt$distal_ei~EI_unmolt$treatment) #equal
+kruskal.test(EI_unmolt$distal_ei~EI_unmolt$treatment) #not different
+```
+
+##Graphing
+
+```{r}
+
+EI_unmoltlong <- melt(EI_unmolt[1:4], id.vars = c("treatment", "lobster"))
+names(EI_unmoltlong)[1]<-"Treatment"
+names(EI_unmoltlong)[3]<-"Location"
+names(EI_unmoltlong)[4]<-"stiffness"
+
+EI_unmoltlong$ID<-paste0(EI_unmoltlong$Location, EI_unmoltlong$Treatment) #creates ID for textures later
+EI_unmoltlong <- EI_unmoltlong %>% #This is changing the names from my defaults to what I want on the graphs
+  mutate(Location = fct_recode(Location,"Proximal" = "proximal_ei", "Distal" = "distal_ei"))
+EI_unmoltlong <- EI_unmoltlong %>% #This is changing the names from my defaults to what I want on the graphs
+  mutate(Treatment = fct_recode(Treatment,"7.97" = "A",  "7.67" = "B", "7.67 ±0.10" = "D", "7.67 ±0.05" = "C"))
+levels(EI_unmoltlong$Treatment)<-gsub(" ", "\n",levels(EI_unmoltlong$Treatment))
+
+
+#Boxplot
+ggplot(data=EI_unmoltlong, aes(x = Treatment,  y=stiffness, fill=ID, color=ID)) + 
+  theme_bw() +
+  geom_boxplot_pattern(aes(pattern = Location, pattern_fill = Location), pattern_density = 0.35, outlier.shape = NA) +
+  scale_pattern_manual(values= c("Proximal" = "stripe", "Distal" = "none")) + # manually assign pattern
+  scale_pattern_fill_manual(values=c("Proximal" = "white", "Distal" = "black"))  +
+  scale_x_discrete(name="Treatment") +
+  scale_y_continuous(name="Flexural stiffness (Nm²)") + 
+  stat_summary(fun=base::mean, geom="point", shape=23, size=2, color="black", position=position_dodge(width=-0.75)) +    
+  stat_summary(fun=base::mean, geom="point", shape=23, size=1, color="white", position=position_dodge(width=-0.75)) + 
+    theme(
+    legend.position="none",
+    legend.title=element_text(size = 15), 
+    legend.text = element_text(size = 12),
+    panel.background = element_rect(fill='transparent'),panel.grid.major=element_blank(), panel.grid.minor = element_blank(), 
+    panel.border = element_rect(fill=NA, colour='black'), 
+    axis.text.x  = element_text(color="black", size=17), #x axis treatment labels
+    axis.text.y  = element_text(color="black", size=17), 
+    axis.title.x = element_text(color="black", size=20),
+    axis.title.y = element_text(color="black", size=20)) + 
+  geom_hline(yintercept = 0) +
+  annotate(geom="text", x=1, y=-0.002, label="10", color="black", size=5) +
+  annotate(geom="text", x=2, y=-0.002, label="14", color="black", size=5) +
+  annotate(geom="text", x=3, y=-0.002, label="11", color="black", size=5) +
+  annotate(geom="text", x=4, y=-0.002, label="15", color="black", size=5) +
+  geom_signif(annotations=c("0.035"), y_position=.048, xmin=1.75, xmax=3.75, tip_length = c(0.01, 0.01)) 
+
+```
