@@ -28,7 +28,7 @@ edx<-subset(edx, layer %in% c("exo", "endo", "core", "outer"))
 edx<-subset(edx, moltstatus=="no")
 
 ##Removing data from SEM that returned data inconsistent with other independent measures for this species
-edx<-subset(edx, SEM=="NE-MRC")
+edx<-subset(edx, SEM=="Apreo LoVac")
 
 #Reforming the data frame so that all elements are in one column
 melt.edx <- melt(edx, id.vars= names(edx)[c(1:6,18:19)])
@@ -37,9 +37,6 @@ melt.edx$percent<-as.numeric(melt.edx$percent)
 
 
 ###STATS###
-
-#Sample size
-count(subset(melt.edx, element=="Ca"), vars=c("element", "region", "layer", "Treatment"))
 
 #Aggregating to one value per lobster (replicate)
 melt.edx_reps<-aggregate(percent ~ Treatment + Lobster + layer + region + element, melt.edx, FUN="mean")
@@ -85,6 +82,8 @@ shapiro.test(subset(carapace_unmolted_ca_exo, Treatment=="C")$percent) # normal
 shapiro.test(subset(carapace_unmolted_ca_exo, Treatment=="D")$percent) # normal
 bartlett.test(percent ~ Treatment, data=carapace_unmolted_ca_exo) #equal
 kruskal.test(carapace_unmolted_ca_exo$percent, carapace_unmolted_ca_exo$Treatment)
+  #Testing normality of residuals if an anova were used
+  shapiro.test(aov(carapace_unmolted_ca_exo$percent ~ carapace_unmolted_ca_exo$Treatment)$residuals) #not normal
 
 boxplot(carapace_unmolted_ca_endo$percent ~ carapace_unmolted_ca_endo$Treatment)
 shapiro.test(subset(carapace_unmolted_ca_endo, Treatment=="A")$percent) # normal
@@ -108,6 +107,10 @@ shapiro.test(subset(horn_unmolted_ca_outer, Treatment=="D")$percent) # not norma
 bartlett.test(percent ~ Treatment, data=horn_unmolted_ca_outer) # not equal
 kruskal.test(horn_unmolted_ca_outer$percent , horn_unmolted_ca_outer$Treatment) #not different 
 mean(horn_unmolted_ca_outer$percent)
+  #Testing normality of residuals if an anova were used
+  shapiro.test(aov(horn_unmolted_ca_outer$percent ~ horn_unmolted_ca_outer$Treatment)$residuals) # normal
+  summary(aov(horn_unmolted_ca_outer$percent ~ horn_unmolted_ca_outer$Treatment)) # not significant
+
 
 shapiro.test(subset(horn_unmolted_ca_core, Treatment=="A")$percent) # normal
 shapiro.test(subset(horn_unmolted_ca_core, Treatment=="B")$percent) # normal
@@ -131,6 +134,9 @@ shapiro.test(subset(antenna_unmolted_mg_exo, Treatment=="C")$percent) #
 shapiro.test(subset(antenna_unmolted_mg_exo, Treatment=="D")$percent) #
 bartlett.test(percent ~ Treatment, data=antenna_unmolted_mg_exo) # equal
 kruskal.test(antenna_unmolted_mg_exo$percent, antenna_unmolted_mg_exo$Treatment) #not different 
+  #Testing normality of residuals if an anova were used
+  shapiro.test(aov(antenna_unmolted_mg_exo$percent ~ antenna_unmolted_mg_exo$Treatment)$residuals) # normal
+  summary(aov(antenna_unmolted_mg_exo$percent ~ antenna_unmolted_mg_exo$Treatment)) # not significant
 
 shapiro.test(subset(antenna_unmolted_mg_endo, Treatment=="A")$percent) #not normal
 shapiro.test(subset(antenna_unmolted_mg_endo, Treatment=="B")$percent)
@@ -138,6 +144,10 @@ shapiro.test(subset(antenna_unmolted_mg_endo, Treatment=="C")$percent) #
 shapiro.test(subset(antenna_unmolted_mg_endo, Treatment=="D")$percent) #not normal
 bartlett.test(percent ~ Treatment, data=antenna_unmolted_mg_endo) #
 kruskal.test(antenna_unmolted_mg_endo$percent, antenna_unmolted_mg_endo$Treatment) # not different
+  #Testing normality of residuals if an anova were used
+  shapiro.test(aov(antenna_unmolted_mg_endo$percent ~ antenna_unmolted_mg_endo$Treatment)$residuals) # normal
+  summary(aov(antenna_unmolted_mg_endo$percent ~ antenna_unmolted_mg_endo$Treatment)) # not significant
+
 
 ##Carapace
 carapace_unmolted_mg<-subset(carapace_unmolted, element=="Mg")
@@ -157,7 +167,11 @@ shapiro.test(subset(carapace_unmolted_mg_endo, Treatment=="B")$percent) # not no
 shapiro.test(subset(carapace_unmolted_mg_endo, Treatment=="C")$percent) #
 shapiro.test(subset(carapace_unmolted_mg_endo, Treatment=="D")$percent) #
 bartlett.test(percent ~ Treatment, data=carapace_unmolted_mg_endo)
-kruskal.test(carapace_unmolted_mg_endo$percent , carapace_unmolted_mg_endo$Treatment) # 0.09
+kruskal.test(carapace_unmolted_mg_endo$percent , carapace_unmolted_mg_endo$Treatment) # 0.73
+  #Testing normality of residuals if an anova were used
+  shapiro.test(aov(carapace_unmolted_mg_endo$percent ~ carapace_unmolted_mg_endo$Treatment)$residuals) # normal
+  summary(aov(carapace_unmolted_mg_endo$percent ~ carapace_unmolted_mg_endo$Treatment)) # not significant
+
 
 ###Horn stats
 horn_unmolted_mg<-subset(horn_unmolted, element=="Mg")
@@ -171,6 +185,8 @@ shapiro.test(subset(horn_unmolted_mg_outer, Treatment=="D")$percent) # not norma
         hist(subset(horn_unmolted_mg_outer, Treatment=="D")$percent) # one high one
 bartlett.test(percent ~ Treatment, data=horn_unmolted_mg_outer) # not equal
 kruskal.test(horn_unmolted_mg_outer$percent , horn_unmolted_mg_outer$Treatment) # not different
+  #Testing normality of residuals if an anova were used
+  shapiro.test(aov(horn_unmolted_mg_outer$percent ~ horn_unmolted_mg_outer$Treatment)$residuals) #not normal
 
 shapiro.test(subset(horn_unmolted_mg_core, Treatment=="A")$percent) # 
 shapiro.test(subset(horn_unmolted_mg_core, Treatment=="B")$percent) # 
@@ -178,6 +194,10 @@ shapiro.test(subset(horn_unmolted_mg_core, Treatment=="C")$percent) # not normal
 shapiro.test(subset(horn_unmolted_mg_core, Treatment=="D")$percent) # 
 bartlett.test(percent ~ Treatment, data=horn_unmolted_mg_core) #  
 kruskal.test(horn_unmolted_mg_core$percent, horn_unmolted_mg_core$Treatment) # not different
+  #Testing normality of residuals if an anova were used
+  shapiro.test(aov(horn_unmolted_mg_core$percent ~ horn_unmolted_mg_core$Treatment)$residuals) # normal
+  summary(aov(horn_unmolted_mg_core$percent ~ horn_unmolted_mg_core$Treatment)) # not significant
+
 
 #Summary stats in manuscript--elements averaged over the layers, as some other research does
 aggregate(percent ~ Treatment + region, data=subset(use, element=="Ca"), FUN="mean")

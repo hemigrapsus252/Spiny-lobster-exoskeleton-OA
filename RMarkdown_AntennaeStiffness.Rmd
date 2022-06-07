@@ -39,8 +39,10 @@ shapiro.test(subset(EI_unmolt,treatment=="B")$proximal_ei) #B is normal
 shapiro.test(subset(EI_unmolt,treatment=="C")$proximal_ei) #C is normal
 shapiro.test(subset(EI_unmolt,treatment=="D")$proximal_ei) #D is normal
 bartlett.test(EI_unmolt$proximal_ei~EI_unmolt$treatment) #not equal; one high data point in A
-oneway.test(proximal_ei~treatment, data=EI_unmolt, var.equal=FALSE) #statistically significant
+oneway.test(proximal_ei~treatment, data=EI_unmolt, var.equal=F) #statistically significant
 #posthocTGH(EI_unmolt$proximal_ei, EI_unmolt$treatment, method="games-howell", digits=4) #B &D are different 
+  #examining equality of variance if an anova were used
+  plot(aov(proximal_ei~treatment, data=EI_unmolt),1, las=1)
 
 #Distal location
 shapiro.test(subset(EI_unmolt,treatment=="A")$distal_ei) #A is normal
@@ -49,6 +51,9 @@ shapiro.test(subset(EI_unmolt,treatment=="C")$distal_ei) #C is normal
 shapiro.test(subset(EI_unmolt,treatment=="D")$distal_ei) #D is not normal
 bartlett.test(EI_unmolt$distal_ei~EI_unmolt$treatment) #equal
 kruskal.test(EI_unmolt$distal_ei~EI_unmolt$treatment) #not different
+  #Testing normality of residuals if an anova were used
+  shapiro.test(aov(EI_unmolt$distal_ei ~ EI_unmolt$treatment)$residuals) # not normal
+
 ```
 
 ##Graphing

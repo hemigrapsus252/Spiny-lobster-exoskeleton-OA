@@ -81,7 +81,8 @@ kruskal.test(Mg, treatment, data=dsp_unmolt)  #sig different
 dunn.test(dsp_unmolt$Mg, dsp_unmolt$treatment, list=TRUE) 
 #Without bonferroni: A and B different slightly; C and & D different
 #With bonf / strong effects: , A and C + D different; B & D different
-
+  #Testing normality of residuals if an anova were used
+  shapiro.test(aov(dsp_unmolt$Mg ~ dsp_unmolt$treatment)$residuals) # not normal
 
 
 # Graphing ----------------------------------------------------------------
